@@ -20,7 +20,6 @@
 
 namespace MSP\TwoFactorAuth\Model\Provider\Engine;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
@@ -32,9 +31,14 @@ use u2flib_server\U2F;
 
 class U2fKey implements EngineInterface
 {
+    /** @deprecated Providers are now enabled via "forced_providers" config */
     const XML_PATH_ENABLED = 'msp_securitysuite_twofactorauth/u2fkey/enabled';
+
+    /** @deprecated Trusted devices functionality is now deprecated  */
     const XML_PATH_ALLOW_TRUSTED_DEVICES = 'msp_securitysuite_twofactorauth/u2fkey/allow_trusted_devices';
-    const CODE = 'u2fkey'; // Must be the same as defined in di.xml
+
+    /** Must be the same as defined in di.xml */
+    const CODE = 'u2fkey';
 
     /**
      * @var UserConfigManagerInterface
@@ -47,24 +51,18 @@ class U2fKey implements EngineInterface
     private $storeManager;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
      * U2fKey constructor.
      * @param StoreManagerInterface $storeManager
-     * @param ScopeConfigInterface $scopeConfig
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param UserConfigManagerInterface $userConfigManager
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         UserConfigManagerInterface $userConfigManager
     ) {
         $this->userConfigManager = $userConfigManager;
         $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -191,21 +189,19 @@ class U2fKey implements EngineInterface
     }
 
     /**
-     * Return true if this provider has been enabled by admin
-     * @return boolean
+     * @inheritDoc
      */
     public function isEnabled()
     {
-        return !!$this->scopeConfig->getValue(static::XML_PATH_ENABLED);
+        return true;
     }
 
     /**
-     * Return true if this provider allows trusted devices
-     * @return boolean
+     * @inheritDoc
      */
     public function isTrustedDevicesAllowed()
     {
-        return !!$this->scopeConfig->getValue(static::XML_PATH_ALLOW_TRUSTED_DEVICES);
+        return false;
     }
 
     /**

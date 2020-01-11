@@ -27,13 +27,16 @@ interface EngineInterface
 {
     /**
      * Return true if this provider has been enabled by admin
+     *
      * @return boolean
      */
     public function isEnabled();
 
     /**
      * Return true if this provider allows trusted devices
+     *
      * @return boolean
+     * @deprecated Trusted Devices functionality is deprecated.
      */
     public function isTrustedDevicesAllowed();
 

@@ -93,12 +93,8 @@ class ControllerActionPredispatch implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if (!$this->tfa->isEnabled()) {
-            return;
-        }
-
         /** @var $controllerAction \Magento\Backend\App\AbstractAction */
-        $controllerAction = $observer->getEvent()->getControllerAction();
+        $controllerAction = $observer->getEvent()->getData('controller_action ');
         $fullActionName = $controllerAction->getRequest()->getFullActionName();
 
         if (in_array($fullActionName, $this->tfa->getAllowedUrls())) {

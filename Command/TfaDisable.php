@@ -25,8 +25,12 @@ use Magento\Framework\App\Config\ConfigResource\ConfigInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use MSP\TwoFactorAuth\Api\TfaInterface;
 
+/**
+ * Command disabling 2FA for Magento.
+ *
+ * @deprecated 2FA cannot be disabled anymore.
+ */
 class TfaDisable extends Command
 {
     /**
@@ -51,23 +55,18 @@ class TfaDisable extends Command
     protected function configure()
     {
         $this->setName('msp:security:tfa:disable');
-        $this->setDescription('Globally disable two factor auth');
+        $this->setDescription('[DEPRECATED] Globally disable two factor auth');
 
         parent::configure();
     }
 
     /**
+     * @inheritDoc
+     *
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config->saveConfig(
-            TfaInterface::XML_PATH_ENABLED,
-            '0',
-            'default',
-            0
-        );
-
-        $this->cacheManager->flush(['config']);
+        trigger_error('Disabling 2FA is deprecated', E_USER_DEPRECATED);
     }
 }

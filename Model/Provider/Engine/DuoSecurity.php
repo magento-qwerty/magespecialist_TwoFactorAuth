@@ -27,7 +27,8 @@ use MSP\TwoFactorAuth\Api\EngineInterface;
 
 class DuoSecurity implements EngineInterface
 {
-    const CODE = 'duo_security'; // Must be the same as defined in di.xml
+    /** Must be the same as defined in di.xml */
+    const CODE = 'duo_security';
 
     const DUO_PREFIX = "TX";
     const APP_PREFIX = "APP";
@@ -36,10 +37,15 @@ class DuoSecurity implements EngineInterface
     const DUO_EXPIRE = 300;
     const APP_EXPIRE = 3600;
 
+    /** @deprecated Providers are now enabled via "forced_providers" config */
     const XML_PATH_ENABLED = 'msp_securitysuite_twofactorauth/duo/enabled';
+
     const XML_PATH_INTEGRATION_KEY = 'msp_securitysuite_twofactorauth/duo/integration_key';
+
     const XML_PATH_SECRET_KEY = 'msp_securitysuite_twofactorauth/duo/secret_key';
+
     const XML_PATH_API_HOSTNAME = 'msp_securitysuite_twofactorauth/duo/api_hostname';
+
     const XML_PATH_APPLICATION_KEY = 'msp_securitysuite_twofactorauth/duo/application_key';
 
     /**
@@ -206,22 +212,18 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * Return true if this provider has been enabled by admin
-     * @return boolean
+     * @inheritDoc
      */
     public function isEnabled()
     {
-        return
-            !!$this->scopeConfig->getValue(static::XML_PATH_ENABLED) &&
-            !!$this->getApiHostname() &&
+        return !!$this->getApiHostname() &&
             !!$this->getIntegrationKey() &&
             !!$this->getApiHostname() &&
             !!$this->getSecretKey();
     }
 
     /**
-     * Return true if this provider allows trusted devices
-     * @return boolean
+     * @inheritDoc
      */
     public function isTrustedDevicesAllowed()
     {

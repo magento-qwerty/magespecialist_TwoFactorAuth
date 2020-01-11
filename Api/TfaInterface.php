@@ -20,13 +20,19 @@
 
 namespace MSP\TwoFactorAuth\Api;
 
+/**
+ * 2FA configuration manager.
+ */
 interface TfaInterface
 {
+    /** @deprecated 2FA cannot be disabled anymore. */
     const XML_PATH_ENABLED = 'msp_securitysuite_twofactorauth/general/enabled';
+
     const XML_PATH_FORCED_PROVIDERS = 'msp_securitysuite_twofactorauth/general/force_providers';
 
     /**
      * Return true if 2FA is enabled
+     *
      * @return boolean
      */
     public function isEnabled();

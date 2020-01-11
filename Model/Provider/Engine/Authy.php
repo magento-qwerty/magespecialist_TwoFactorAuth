@@ -33,8 +33,13 @@ use MSP\TwoFactorAuth\Model\Provider\Engine\Authy\Token;
 
 class Authy implements EngineInterface
 {
-    const CODE = 'authy'; // Must be the same as defined in di.xml
+    /** Must be the same as defined in di.xml */
+    const CODE = 'authy';
+
+    /** @deprecated Providers are now enabled via "forced_providers" config */
     const XML_PATH_ENABLED = 'msp_securitysuite_twofactorauth/authy/enabled';
+
+    /** @deprecated Trusted devices functionality is now deprecated  */
     const XML_PATH_ALLOW_TRUSTED_DEVICES = 'msp_securitysuite_twofactorauth/authy/allow_trusted_devices';
 
     /**
@@ -131,14 +136,11 @@ class Authy implements EngineInterface
     }
 
     /**
-     * Return true if this provider has been enabled by admin
-     * @return boolean
+     * @inheritDoc
      */
     public function isEnabled()
     {
-        return
-            !!$this->scopeConfig->getValue(static::XML_PATH_ENABLED) &&
-            !!$this->service->getApiKey();
+        return !!$this->service->getApiKey();
     }
 
     /**
@@ -154,11 +156,10 @@ class Authy implements EngineInterface
     }
 
     /**
-     * Return true if this provider allows trusted devices
-     * @return boolean
+     * @inheritDoc
      */
     public function isTrustedDevicesAllowed()
     {
-        return !!$this->scopeConfig->getValue(static::XML_PATH_ALLOW_TRUSTED_DEVICES);
+        return false;
     }
 }

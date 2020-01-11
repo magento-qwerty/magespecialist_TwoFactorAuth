@@ -24,6 +24,7 @@ interface ProviderInterface
 {
     /**
      * Return true if this provider has been enabled by admin
+     *
      * @return boolean
      */
     public function isEnabled();

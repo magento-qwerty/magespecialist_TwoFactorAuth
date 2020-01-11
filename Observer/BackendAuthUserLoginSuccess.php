@@ -52,10 +52,6 @@ class BackendAuthUserLoginSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if (!$this->tfa->isEnabled()) {
-            return;
-        }
-
         if ($this->trustedManager->isTrustedDevice()) {
             $this->trustedManager->rotateTrustedDeviceToken();
         }
