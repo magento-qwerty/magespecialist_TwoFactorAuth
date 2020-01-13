@@ -20,15 +20,15 @@
 
 namespace MSP\TwoFactorAuth\Observer;
 
+use Magento\Backend\App\AbstractAction;
 use Magento\Backend\Model\Auth\Session;
-use Magento\Backend\Model\UrlInterface;
-use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\User\Model\User;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Api\TrustedManagerInterface;
+use MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
 
 class ControllerActionPredispatch implements ObserverInterface
 {
@@ -36,16 +36,6 @@ class ControllerActionPredispatch implements ObserverInterface
      * @var TfaInterface
      */
     private $tfa;
-
-    /**
-     * @var ActionFlag
-     */
-    private $actionFlag;
-
-    /**
-     * @var UrlInterface
-     */
-    private $url;
 
     /**
      * @var TfaSessionInterface
@@ -58,33 +48,46 @@ class ControllerActionPredispatch implements ObserverInterface
     private $session;
 
     /**
-     * @var TrustedManagerInterface
+     * @var UserConfigRequestManagerInterface
      */
-    private $trustedManager;
+    private $configRequestManager;
+
+    /**
+     * @var AbstractAction|null
+     */
+    private $action;
 
     public function __construct(
         TfaInterface $tfa,
-        ActionFlag $actionFlag,
-        UrlInterface $url,
         Session $session,
         TfaSessionInterface $tfaSession,
-        TrustedManagerInterface $trustedManager
+        UserConfigRequestManagerInterface $configRequestManager
     ) {
         $this->tfa = $tfa;
-        $this->actionFlag = $actionFlag;
-        $this->url = $url;
         $this->tfaSession = $tfaSession;
         $this->session = $session;
-        $this->trustedManager = $trustedManager;
+        $this->configRequestManager = $configRequestManager;
     }
 
     /**
      * Get current user
-     * @return \Magento\User\Model\User|null
+     * @return User|null
      */
     private function getUser()
     {
         return $this->session->getUser();
+    }
+
+    /**
+     * Redirect user to given URL.
+     *
+     * @param string $url
+     * @return void
+     */
+    private function redirect(string $url): void
+    {
+        $this->action->getActionFlag()->set('', Action::FLAG_NO_DISPATCH, true);
+        $this->action->getResponse()->setRedirect($this->action->getUrl($url));
     }
 
     /**
@@ -93,23 +96,27 @@ class ControllerActionPredispatch implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        /** @var $controllerAction \Magento\Backend\App\AbstractAction */
-        $controllerAction = $observer->getEvent()->getData('controller_action ');
+        /** @var $controllerAction AbstractAction */
+        $controllerAction = $observer->getEvent()->getData('controller_action');
+        $this->action = $controllerAction;
         $fullActionName = $controllerAction->getRequest()->getFullActionName();
 
         if (in_array($fullActionName, $this->tfa->getAllowedUrls())) {
+            //Actions that are used for 2FA must remain accessible.
             return;
         }
 
         $user = $this->getUser();
-        if ($user && !empty($this->tfa->getUserProviders($user->getId()))) {
-            $accessGranted = ($this->tfaSession->isGranted() || $this->trustedManager->isTrustedDevice()) &&
-                empty($this->tfa->getProvidersToActivate($user->getId()));
-
-            if (!$accessGranted) {
-                $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
-                $url = $this->url->getUrl('msp_twofactorauth/tfa/index');
-                $controllerAction->getResponse()->setRedirect($url);
+        if ($user) {
+            if ($this->configRequestManager->isConfigurationRequiredFor((string)$user->getId())) {
+                //User must configure 2FA first
+                $this->redirect('msp_twofactorauth/tfa/requestconfig');
+            } else {
+                //2FA required
+                $accessGranted = $this->tfaSession->isGranted();
+                if (!$accessGranted) {
+                    $this->redirect('msp_twofactorauth/tfa/index');
+                }
             }
         }
     }

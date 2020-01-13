@@ -19,16 +19,14 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="admin_login" />
 
-    <event name="controller_action_predispatch">
-        <observer name="msp_twofactorauth" instance="MSP\TwoFactorAuth\Observer\ControllerActionPredispatch"/>
-    </event>
-    <event name="admin_user_save_after">
-        <observer name="msp_twofactorauth" instance="MSP\TwoFactorAuth\Observer\AdminUserSaveAfter"/>
-    </event>
-    <event name="admin_user_load_after">
-        <observer name="msp_twofactorauth" instance="MSP\TwoFactorAuth\Observer\AdminUserLoadAfter"/>
-    </event>
-</config>
+    <body>
+        <referenceContainer name="login.content">
+            <block class="Magento\Backend\Block\Template" name="content"
+                   template="MSP_TwoFactorAuth::msp_twofactorauth/request_config.phtml" />
+        </referenceContainer>
+    </body>
+</page>

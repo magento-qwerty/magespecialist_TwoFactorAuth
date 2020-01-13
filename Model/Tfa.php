@@ -182,7 +182,8 @@ class Tfa implements TfaInterface
                 'adminhtml_auth_login',
                 'adminhtml_auth_logout',
                 'adminhtml_auth_forgotpassword',
-                'msp_twofactorauth_tfa_index'
+                'msp_twofactorauth_tfa_index',
+                'msp_twofactorauth_tfa_requestconfig'
             ];
 
             $providers = $this->getAllProviders();

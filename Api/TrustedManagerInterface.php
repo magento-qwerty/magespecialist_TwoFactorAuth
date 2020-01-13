@@ -20,6 +20,11 @@
 
 namespace MSP\TwoFactorAuth\Api;
 
+/**
+ * Manages trusted devices for users.
+ *
+ * @deprecated Trusted Device functionality was removed.
+ */
 interface TrustedManagerInterface
 {
     const TRUSTED_DEVICE_COOKIE = 'msp_tfa_trusted';

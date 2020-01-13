@@ -175,4 +175,8 @@
             <argument name="canReset" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
+
+    <preference for="MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface" type="MSP\TwoFactorAuth\Model\UserConfig\UserConfigRequestManager" />
+    <preference for="MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface" type="MSP\TwoFactorAuth\Model\UserConfig\SignedTokenManager" />
+    <preference for="MSP\TwoFactorAuth\Api\UserNotifierInterface" type="MSP\TwoFactorAuth\Model\EmailUserNotifier" />
 </config>
