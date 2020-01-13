@@ -29,6 +29,7 @@ use Magento\User\Model\User;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
 use MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 class ControllerActionPredispatch implements ObserverInterface
 {
@@ -57,16 +58,30 @@ class ControllerActionPredispatch implements ObserverInterface
      */
     private $action;
 
+    /**
+     * @var HtmlAreaTokenVerifier
+     */
+    private $tokenManager;
+
+    /**
+     * @param TfaInterface $tfa
+     * @param TfaSessionInterface $tfaSession
+     * @param Session $session
+     * @param UserConfigRequestManagerInterface $configRequestManager
+     * @param HtmlAreaTokenVerifier $tokenManager
+     */
     public function __construct(
         TfaInterface $tfa,
-        Session $session,
         TfaSessionInterface $tfaSession,
-        UserConfigRequestManagerInterface $configRequestManager
+        Session $session,
+        UserConfigRequestManagerInterface $configRequestManager,
+        HtmlAreaTokenVerifier $tokenManager
     ) {
         $this->tfa = $tfa;
         $this->tfaSession = $tfaSession;
         $this->session = $session;
         $this->configRequestManager = $configRequestManager;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -100,16 +115,18 @@ class ControllerActionPredispatch implements ObserverInterface
         $controllerAction = $observer->getEvent()->getData('controller_action');
         $this->action = $controllerAction;
         $fullActionName = $controllerAction->getRequest()->getFullActionName();
+        $user = $this->getUser();
 
-        if (in_array($fullActionName, $this->tfa->getAllowedUrls())) {
+        if (in_array($fullActionName, $this->tfa->getAllowedUrls(), true)) {
             //Actions that are used for 2FA must remain accessible.
             return;
         }
 
-        $user = $this->getUser();
         if ($user) {
             if ($this->configRequestManager->isConfigurationRequiredFor((string)$user->getId())) {
                 //User must configure 2FA first
+                $this->tokenManager->readConfigToken();
+                //User needs special link with a token to be allowed to configure 2FA
                 $this->redirect('msp_twofactorauth/tfa/requestconfig');
             } else {
                 //2FA required

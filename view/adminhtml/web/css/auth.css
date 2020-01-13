@@ -75,6 +75,12 @@
     float: left;
 }
 
+.msp-tfa-provider .tfa-checkbox {
+    width: 32px;
+    margin-right: 1em;
+    float: left;
+}
+
 .msp-tfa-change-provider-trigger:hover {
     background: #f0f0f0;
 }

@@ -75,7 +75,7 @@ class EmailUserNotifier implements UserNotifierInterface
     {
         $url = $this->scopeConfig->getValue('msp_securitysuite_twofactorauth/general/user_config_url');
         if (!$url) {
-            $url = 'admin';
+            $url = $this->urlHelper->getStartupPageUrl();
         }
         if (mb_strpos($url, '{{tfa_token}}') !== false) {
             $url = str_replace('{{tfa_token}}', $token, $url);

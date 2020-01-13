@@ -10,8 +10,10 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\AuthorizationException;
 use MSP\TwoFactorAuth\Api\Exception\NotificationExceptionInterface;
+use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 /**
  * Request 2FA config from the user.
@@ -24,20 +26,38 @@ class Requestconfig extends AbstractAction implements HttpGetActionInterface, Ht
     private $configRequestManager;
 
     /**
+     * @var HtmlAreaTokenVerifier
+     */
+    private $tokenVerifier;
+
+    /**
+     * @var TfaInterface
+     */
+    private $tfa;
+
+    /**
      * @var Session
      */
     private $session;
 
     /**
-     * @inheritDoc
+     * @param Context $context
+     * @param UserConfigRequestManagerInterface $configRequestManager
+     * @param HtmlAreaTokenVerifier $tokenVerifier
+     * @param TfaInterface $tfa
+     * @param Session $session
      */
     public function __construct(
         Context $context,
         UserConfigRequestManagerInterface $configRequestManager,
+        HtmlAreaTokenVerifier $tokenVerifier,
+        TfaInterface $tfa,
         Session $session
     ) {
         parent::__construct($context);
         $this->configRequestManager = $configRequestManager;
+        $this->tokenVerifier = $tokenVerifier;
+        $this->tfa = $tfa;
         $this->session = $session;
     }
 
@@ -49,6 +69,13 @@ class Requestconfig extends AbstractAction implements HttpGetActionInterface, Ht
         $user = $this->session->getUser();
         if (!$this->configRequestManager->isConfigurationRequiredFor((string)$user->getId())) {
             throw new AuthorizationException(__('2FA is already configured for the user.'));
+        }
+        if ($this->tokenVerifier->isConfigTokenProvided()) {
+            if (!$this->tfa->getForcedProviders()) {
+                return $this->_redirect('msp_twofactorauth/tfa/configure');
+            } else {
+                return $this->_redirect('msp_twofactorauth/tfa/index');
+            }
         }
 
         try {

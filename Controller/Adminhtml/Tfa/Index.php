@@ -21,11 +21,12 @@
 namespace MSP\TwoFactorAuth\Controller\Adminhtml\Tfa;
 
 use Magento\Backend\Model\Auth\Session;
-use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 class Index extends AbstractAction
 {
@@ -45,21 +46,35 @@ class Index extends AbstractAction
     private $userConfigManager;
 
     /**
-     * @var Action\Context
+     * @var Context
      */
     private $context;
 
+    /**
+     * @var HtmlAreaTokenVerifier
+     */
+    private $tokenVerifier;
+
+    /**
+     * @param Context $context
+     * @param Session $session
+     * @param UserConfigManagerInterface $userConfigManager
+     * @param TfaInterface $tfa
+     * @param HtmlAreaTokenVerifier $tokenVerifier
+     */
     public function __construct(
-        Action\Context $context,
+        Context $context,
         Session $session,
         UserConfigManagerInterface $userConfigManager,
-        TfaInterface $tfa
+        TfaInterface $tfa,
+        HtmlAreaTokenVerifier $tokenVerifier
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
         $this->session = $session;
         $this->userConfigManager = $userConfigManager;
         $this->context = $context;
+        $this->tokenVerifier = $tokenVerifier;
     }
 
     /**
@@ -69,6 +84,19 @@ class Index extends AbstractAction
     private function getUser()
     {
         return $this->session->getUser();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _isAllowed()
+    {
+        $isAllowed = parent::_isAllowed();
+        if ($isAllowed) {
+            $isAllowed = $this->tokenVerifier->isConfigTokenProvided();
+        }
+
+        return $isAllowed;
     }
 
     /**

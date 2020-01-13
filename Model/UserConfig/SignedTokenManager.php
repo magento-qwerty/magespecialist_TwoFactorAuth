@@ -50,6 +50,7 @@ class SignedTokenManager implements UserConfigTokenManagerInterface
      */
     public function isValidFor(string $userId, string $token): bool
     {
+        $isValid = false;
         [$encodedData, $signatureProvided] = explode('.', base64_decode($token));
         try {
             $data = $this->json->unserialize($encodedData);
@@ -59,12 +60,14 @@ class SignedTokenManager implements UserConfigTokenManagerInterface
                 && $data['user_id'] === $userId
                 && $data['tfa_configuration']
                 && (time() - (int)$data['iss']) < 3600
-                && Security::compareStrings(base64_encode($this->encryptor->hash($data)), $signatureProvided)
+                && Security::compareStrings(base64_encode($this->encryptor->hash($encodedData)), $signatureProvided)
             ) {
-                return true;
+                $isValid = true;
             }
-        } finally {
-            return false;
+        } catch (\Throwable $exception) {
+            $isValid = false;
         }
+
+        return $isValid;
     }
 }
