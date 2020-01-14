@@ -20,15 +20,17 @@ namespace MSP\TwoFactorAuth\Controller\Adminhtml\U2f;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\ResponseInterface;
-use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
+use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\U2fKey;
 use MSP\TwoFactorAuth\Model\Tfa;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Configure extends AbstractAction
+class Configure extends AbstractConfigureAction implements HttpGetActionInterface
 {
     /**
      * @var Tfa
@@ -43,12 +45,13 @@ class Configure extends AbstractAction
     public function __construct(
         Tfa $tfa,
         Session $session,
-        Action\Context $context
+        Action\Context $context,
+        HtmlAreaTokenVerifier $tokenVerifier
     ) {
     
         $this->tfa = $tfa;
         $this->session = $session;
-        parent::__construct($context);
+        parent::__construct($context, $tokenVerifier);
     }
 
     /**
@@ -79,6 +82,10 @@ class Configure extends AbstractAction
      */
     protected function _isAllowed()
     {
+        if (!parent::_isAllowed()) {
+            return false;
+        }
+
         $user = $this->getUser();
 
         return

@@ -22,17 +22,19 @@ namespace MSP\TwoFactorAuth\Controller\Adminhtml\Authy;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
+use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Authy;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Configureverifypost extends AbstractAction
+class Configureverifypost extends AbstractConfigureAction implements HttpPostActionInterface
 {
     /**
      * @var JsonFactory
@@ -79,6 +81,7 @@ class Configureverifypost extends AbstractAction
      * @param Authy $authy
      * @param Authy\Verification $verification
      * @param JsonFactory $jsonFactory
+     * @param HtmlAreaTokenVerifier $tokenVerifier
      */
     public function __construct(
         Action\Context $context,
@@ -88,9 +91,10 @@ class Configureverifypost extends AbstractAction
         AlertInterface $alert,
         Authy $authy,
         Authy\Verification $verification,
-        JsonFactory $jsonFactory
+        JsonFactory $jsonFactory,
+        HtmlAreaTokenVerifier $tokenVerifier
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $tokenVerifier);
         $this->jsonFactory = $jsonFactory;
         $this->session = $session;
         $this->tfa = $tfa;
@@ -156,6 +160,10 @@ class Configureverifypost extends AbstractAction
      */
     protected function _isAllowed()
     {
+        if (!parent::_isAllowed()) {
+            return false;
+        }
+
         $user = $this->getUser();
 
         return

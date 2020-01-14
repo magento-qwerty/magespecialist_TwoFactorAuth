@@ -22,18 +22,20 @@ namespace MSP\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObjectFactory;
+use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Google;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Configurepost extends AbstractAction
+class Configurepost extends AbstractConfigureAction implements HttpPostActionInterface
 {
     /**
      * @var TfaInterface
@@ -78,9 +80,10 @@ class Configurepost extends AbstractAction
         TfaSessionInterface $tfaSession,
         TfaInterface $tfa,
         AlertInterface $alert,
-        DataObjectFactory $dataObjectFactory
+        DataObjectFactory $dataObjectFactory,
+        HtmlAreaTokenVerifier $tokenVerifier
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $tokenVerifier);
         $this->tfa = $tfa;
         $this->session = $session;
         $this->jsonFactory = $jsonFactory;
@@ -143,6 +146,10 @@ class Configurepost extends AbstractAction
      */
     protected function _isAllowed()
     {
+        if (!parent::_isAllowed()) {
+            return false;
+        }
+
         $user = $this->getUser();
 
         return
