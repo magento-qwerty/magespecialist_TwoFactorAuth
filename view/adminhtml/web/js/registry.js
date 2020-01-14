@@ -21,6 +21,6 @@ define([
     'ko'
 ], function (ko) {
     return {
-        trustThisDevice: ko.observable(false)
+        trustThisDevice: 0
     };
 });
