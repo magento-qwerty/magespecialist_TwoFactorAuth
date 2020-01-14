@@ -25,7 +25,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use MSP\TwoFactorAuth\Api\ProviderPoolInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
-use MSP\TwoFactorAuth\Api\TrustedRepositoryInterface;
 use MSP\TwoFactorAuth\Api\UserConfigManagerInterface;
 
 /**
@@ -54,18 +53,20 @@ class Tfa implements TfaInterface
     private $searchCriteriaBuilder;
 
     /**
-     * @var TrustedRepositoryInterface
-     */
-    private $trustedRepository;
-
-    /**
      * @var ProviderPoolInterface
      */
     private $providerPool;
 
+    /**
+     * @param ScopeConfigInterface $scopeConfig
+     * @param \MSP\TwoFactorAuth\Api\TrustedRepositoryInterface $trustedRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param UserConfigManagerInterface $userConfigManager
+     * @param ProviderPoolInterface $providerPool
+     */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        TrustedRepositoryInterface $trustedRepository,
+        \MSP\TwoFactorAuth\Api\TrustedRepositoryInterface $trustedRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         UserConfigManagerInterface $userConfigManager,
         ProviderPoolInterface $providerPool
@@ -73,7 +74,6 @@ class Tfa implements TfaInterface
         $this->scopeConfig = $scopeConfig;
         $this->userConfigManager = $userConfigManager;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->trustedRepository = $trustedRepository;
         $this->providerPool = $providerPool;
     }
 

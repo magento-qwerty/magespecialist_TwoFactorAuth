@@ -8,6 +8,9 @@ namespace MSP\TwoFactorAuth\Model\Data;
 
 use Magento\Framework\Api\AbstractExtensibleObject;
 
+/**
+ * @inheritDoc
+ */
 class Trusted extends AbstractExtensibleObject implements
     \MSP\TwoFactorAuth\Api\Data\TrustedInterface
 {

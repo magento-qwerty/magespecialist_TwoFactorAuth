@@ -84,6 +84,8 @@ class TrustedRepository implements \MSP\TwoFactorAuth\Api\TrustedRepositoryInter
      */
     public function save(\MSP\TwoFactorAuth\Api\Data\TrustedInterface $trusted)
     {
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
+
         $trustedData = $this->extensibleDataObjectConverter->toNestedArray(
             $trusted,
             [],
@@ -106,6 +108,8 @@ class TrustedRepository implements \MSP\TwoFactorAuth\Api\TrustedRepositoryInter
      */
     public function getById($id)
     {
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
+
         $fromRegistry = $this->registry->retrieveById($id);
         if ($fromRegistry === null) {
             $trusted = $this->trustedFactory->create();
@@ -126,6 +130,8 @@ class TrustedRepository implements \MSP\TwoFactorAuth\Api\TrustedRepositoryInter
      */
     public function getByUserId($value)
     {
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
+
         $fromRegistry = $this->registry->retrieveByUserId($value);
         if ($fromRegistry === null) {
             $trusted = $this->trustedFactory->create();
@@ -146,6 +152,8 @@ class TrustedRepository implements \MSP\TwoFactorAuth\Api\TrustedRepositoryInter
      */
     public function delete(\MSP\TwoFactorAuth\Api\Data\TrustedInterface $trusted)
     {
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
+
         $trustedData = $this->extensibleDataObjectConverter->toNestedArray(
             $trusted,
             [],
@@ -167,6 +175,8 @@ class TrustedRepository implements \MSP\TwoFactorAuth\Api\TrustedRepositoryInter
      */
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
     {
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
+
         /** @var \MSP\TwoFactorAuth\Api\Data\TrustedSearchResultsInterface $searchResults */
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($searchCriteria);

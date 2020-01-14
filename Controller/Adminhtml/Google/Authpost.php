@@ -27,7 +27,6 @@ use Magento\Framework\DataObjectFactory;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Api\TrustedManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Google;
 
@@ -61,11 +60,6 @@ class Authpost extends AbstractAction
     private $tfaSession;
 
     /**
-     * @var TrustedManagerInterface
-     */
-    private $trustedManager;
-
-    /**
      * @var DataObjectFactory
      */
     private $dataObjectFactory;
@@ -82,7 +76,7 @@ class Authpost extends AbstractAction
      * @param JsonFactory $jsonFactory
      * @param Google $google
      * @param TfaSessionInterface $tfaSession
-     * @param TrustedManagerInterface $trustedManager
+     * @param \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager
      * @param TfaInterface $tfa
      * @param AlertInterface $alert
      * @param DataObjectFactory $dataObjectFactory
@@ -93,7 +87,7 @@ class Authpost extends AbstractAction
         JsonFactory $jsonFactory,
         Google $google,
         TfaSessionInterface $tfaSession,
-        TrustedManagerInterface $trustedManager,
+        \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager,
         TfaInterface $tfa,
         AlertInterface $alert,
         DataObjectFactory $dataObjectFactory
@@ -104,7 +98,6 @@ class Authpost extends AbstractAction
         $this->jsonFactory = $jsonFactory;
         $this->google = $google;
         $this->tfaSession = $tfaSession;
-        $this->trustedManager = $trustedManager;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->alert = $alert;
     }
@@ -132,7 +125,6 @@ class Authpost extends AbstractAction
         if ($this->google->verify($user, $this->dataObjectFactory->create([
             'data' => $this->getRequest()->getParams(),
         ]))) {
-            $this->trustedManager->handleTrustDeviceRequest(Google::CODE, $this->getRequest());
             $this->tfaSession->grantAccess();
             $response->setData(['success' => true]);
         } else {

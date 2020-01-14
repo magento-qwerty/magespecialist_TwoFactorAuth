@@ -61,7 +61,9 @@ interface ProviderInterface
 
     /**
      * Return true if this provider allows trusted devices
+     *
      * @return boolean
+     * @deprecated Trusted Devices functionality was removed.
      */
     public function isTrustedDevicesAllowed();
 

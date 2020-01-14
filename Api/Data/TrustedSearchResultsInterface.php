@@ -24,6 +24,11 @@
 
 namespace MSP\TwoFactorAuth\Api\Data;
 
+/**
+ * Found trusted devices.
+ *
+ * @deprecated Trusted Devices functionality was removed.
+ */
 interface TrustedSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {
     /**

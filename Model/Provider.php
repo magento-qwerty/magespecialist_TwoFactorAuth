@@ -171,7 +171,7 @@ class Provider implements ProviderInterface
      */
     public function isTrustedDevicesAllowed()
     {
-        return $this->engine->isTrustedDevicesAllowed();
+        return false;
     }
 
     /**

@@ -31,21 +31,27 @@ interface TrustedManagerInterface
 
     /**
      * Rotate secret trust token
+     *
      * @return boolean
+     * @deprecated Trusted Device functionality was removed.
      */
     public function rotateTrustedDeviceToken();
 
     /**
      * Return true if device is trusted
+     *
      * @return boolean
+     * @deprecated Trusted Device functionality was removed.
      */
     public function isTrustedDevice();
 
     /**
      * Revoke trusted device
+     *
      * @param int $tokenId
      * @return bool
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @deprecated Trusted Device functionality was removed.
      */
     public function revokeTrustedDevice($tokenId);
 
@@ -54,6 +60,7 @@ interface TrustedManagerInterface
      * @param string $providerCode
      * @param \Magento\Framework\App\RequestInterface $request
      * @return boolean
+     * @deprecated Trusted Device functionality was removed.
      */
     public function handleTrustDeviceRequest($providerCode, \Magento\Framework\App\RequestInterface $request);
 }

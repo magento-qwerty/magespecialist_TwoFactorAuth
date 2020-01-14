@@ -26,7 +26,6 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Api\TrustedManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Authy;
 
@@ -51,11 +50,6 @@ class Verifyonetouch extends AbstractAction
     private $tfa;
 
     /**
-     * @var TrustedManagerInterface
-     */
-    private $trustedManager;
-
-    /**
      * @var TfaSessionInterface
      */
     private $tfaSession;
@@ -74,7 +68,7 @@ class Verifyonetouch extends AbstractAction
      * Verifyonetouch constructor.
      * @param Action\Context $context
      * @param JsonFactory $jsonFactory
-     * @param TrustedManagerInterface $trustedManager
+     * @param \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager
      * @param TfaSessionInterface $tfaSession
      * @param TfaInterface $tfa
      * @param AlertInterface $alert
@@ -84,7 +78,7 @@ class Verifyonetouch extends AbstractAction
     public function __construct(
         Action\Context $context,
         JsonFactory $jsonFactory,
-        TrustedManagerInterface $trustedManager,
+        \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager,
         TfaSessionInterface $tfaSession,
         TfaInterface $tfa,
         AlertInterface $alert,
@@ -95,7 +89,6 @@ class Verifyonetouch extends AbstractAction
         $this->session = $session;
         $this->jsonFactory = $jsonFactory;
         $this->tfa = $tfa;
-        $this->trustedManager = $trustedManager;
         $this->tfaSession = $tfaSession;
         $this->alert = $alert;
         $this->oneTouch = $oneTouch;
@@ -120,7 +113,6 @@ class Verifyonetouch extends AbstractAction
         try {
             $res = $this->oneTouch->verify($this->getUser());
             if ($res == 'approved') {
-                $this->trustedManager->handleTrustDeviceRequest(Authy::CODE, $this->getRequest());
                 $this->tfaSession->grantAccess();
                 $res = ['success' => true, 'status' => 'approved'];
             } else {

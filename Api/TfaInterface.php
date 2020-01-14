@@ -80,8 +80,10 @@ interface TfaInterface
 
     /**
      * Return a list of trusted devices for given user id
+     *
      * @param int $userId
      * @return \MSP\TwoFactorAuth\Api\Data\TrustedInterface[]
+     * @deprecated Trusted Devices functionality was removed.
      */
     public function getTrustedDevices($userId);
 

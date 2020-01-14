@@ -27,7 +27,6 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
-use MSP\TwoFactorAuth\Api\TrustedManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Authy;
 
@@ -57,11 +56,6 @@ class Authpost extends AbstractAction
     private $tfaSession;
 
     /**
-     * @var TrustedManagerInterface
-     */
-    private $trustedManager;
-
-    /**
      * @var Authy
      */
     private $authy;
@@ -83,7 +77,7 @@ class Authpost extends AbstractAction
      * @param JsonFactory $jsonFactory
      * @param Authy $authy
      * @param TfaSessionInterface $tfaSession
-     * @param TrustedManagerInterface $trustedManager
+     * @param \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager
      * @param TfaInterface $tfa
      * @param AlertInterface $alert
      * @param DataObjectFactory $dataObjectFactory
@@ -94,7 +88,7 @@ class Authpost extends AbstractAction
         JsonFactory $jsonFactory,
         Authy $authy,
         TfaSessionInterface $tfaSession,
-        TrustedManagerInterface $trustedManager,
+        \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager,
         TfaInterface $tfa,
         AlertInterface $alert,
         DataObjectFactory $dataObjectFactory
@@ -104,7 +98,6 @@ class Authpost extends AbstractAction
         $this->session = $session;
         $this->jsonFactory = $jsonFactory;
         $this->tfaSession = $tfaSession;
-        $this->trustedManager = $trustedManager;
         $this->authy = $authy;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->alert = $alert;
@@ -131,7 +124,6 @@ class Authpost extends AbstractAction
             $this->authy->verify($user, $this->dataObjectFactory->create([
                 'data' => $this->getRequest()->getParams(),
             ]));
-            $this->trustedManager->handleTrustDeviceRequest(Authy::CODE, $this->getRequest());
             $this->tfaSession->grantAccess();
             $result->setData(['success' => true]);
         } catch (\Exception $e) {

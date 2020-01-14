@@ -20,27 +20,24 @@
 
 namespace MSP\TwoFactorAuth\Controller\Adminhtml\Tfa;
 
-use Magento\Backend\App\Action;
-use Magento\Framework\App\ResponseInterface;
-use MSP\TwoFactorAuth\Api\TrustedManagerInterface;
+use Magento\Backend\App\Action\Context;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 
 /**
+ * @deprecated Trusted Devices functionality was removed.
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class Revoke extends AbstractAction
 {
     /**
-     * @var TrustedManagerInterface
+     * @param Context $context
+     * @param \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager
      */
-    private $trustedManager;
-
     public function __construct(
-        Action\Context $context,
-        TrustedManagerInterface $trustedManager
+        Context $context,
+        \MSP\TwoFactorAuth\Api\TrustedManagerInterface $trustedManager
     ) {
         parent::__construct($context);
-        $this->trustedManager = $trustedManager;
     }
 
     /**
@@ -48,12 +45,7 @@ class Revoke extends AbstractAction
      */
     public function execute()
     {
-        $tokenId = $this->getRequest()->getParam('id');
-        $userId = $this->getRequest()->getParam('user_id');
-        $this->trustedManager->revokeTrustedDevice($tokenId);
-
-        $this->messageManager->addSuccessMessage(__('Device authorization revoked'));
-        return $this->_redirect('adminhtml/user/edit', ['user_id' => $userId]);
+        trigger_error('Trusted devices are no longer supported', E_USER_DEPRECATED);
     }
 
     /**

@@ -27,7 +27,6 @@ use Magento\User\Model\User;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigManagerInterface;
 use MSP\TwoFactorAuth\Model\Config\Source\EnabledProvider;
-use MSP\TwoFactorAuth\Model\Trusted;
 
 class DataProvider extends AbstractDataProvider
 {
@@ -131,34 +130,6 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * Get a list of trusted devices as array
-     * @param User $user
-     * @return array
-     */
-    private function getTrustedDevices(User $user)
-    {
-        $trustedDevices = $this->tfa->getTrustedDevices($user->getId());
-        $res = [];
-
-        foreach ($trustedDevices as $trustedDevice) {
-            /** @var Trusted $trustedDevice */
-            $revokeUrl = $this->url->getUrl('msp_twofactorauth/tfa/revoke', [
-                'id' => $trustedDevice->getId(),
-                'user_id' => $user->getId(),
-            ]);
-
-            $res[] = [
-                'last_ip' => $trustedDevice->getLastIp(),
-                'date_time' => $trustedDevice->getDateTime(),
-                'device_name' => $trustedDevice->getDeviceName(),
-                'revoke_url' => $revokeUrl,
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getMeta()
@@ -186,11 +157,10 @@ class DataProvider extends AbstractDataProvider
             foreach ($items as $user) {
                 $providerCodes = $this->userConfigManager->getProvidersCodes($user->getId());
                 $resetProviders = $this->getResetProviderUrls($user);
-                $trustedDevices = $this->getTrustedDevices($user);
 
                 $data = [
                     'reset_providers' => $resetProviders,
-                    'trusted_devices' => $trustedDevices,
+                    'trusted_devices' => [],
                     'msp_tfa_providers' => $providerCodes,
                 ];
                 $this->loadedData[$user->getId()] = $data;

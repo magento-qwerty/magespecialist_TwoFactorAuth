@@ -26,6 +26,11 @@ namespace MSP\TwoFactorAuth\Api\Data;
 
 use Magento\Framework\Api\ExtensibleDataInterface;
 
+/**
+ * Trusted Device DTO.
+ *
+ * @deprecated Trusted Devices functionality was removed.
+ */
 interface TrustedInterface extends ExtensibleDataInterface
 {
     const ID = 'msp_tfa_trusted_id';
@@ -38,6 +43,7 @@ interface TrustedInterface extends ExtensibleDataInterface
 
     /**
      * Get value for msp_tfa_trusted_id
+     *
      * @return int
      */
     public function getId();

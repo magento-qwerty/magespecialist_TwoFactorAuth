@@ -26,6 +26,7 @@ namespace MSP\TwoFactorAuth\Model;
 
 /**
  * @SuppressWarnings(PHPMD.ShortVariable)
+ * @deprecated Trusted Devices functionality was removed.
  */
 class TrustedRegistry
 {
