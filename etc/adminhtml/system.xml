@@ -41,6 +41,7 @@
                     <label>Providers to use</label>
                     <source_model>MSP\TwoFactorAuth\Model\Config\Source\Provider</source_model>
                     <comment>Two-factor authorization providers for admin users to use during login</comment>
+                    <backend_model>MSP\TwoFactorAuth\Model\Config\Backend\ForceProviders</backend_model>
                 </field>
             </group>
 
