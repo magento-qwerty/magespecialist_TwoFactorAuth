@@ -114,6 +114,7 @@ class ControllerActionPredispatchTest extends AbstractBackendController
      *
      * @return void
      * @magentoConfigFixture default/msp_securitysuite_twofactorauth/general/force_providers google
+     * @magentoDbIsolation enabled
      */
     public function testTfaChallenged(): void
     {
