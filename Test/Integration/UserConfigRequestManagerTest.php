@@ -7,7 +7,6 @@ use Magento\Framework\Acl\Builder;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Mail\Template\TransportBuilderMock;
 use Magento\User\Model\User;
-use MSP\TwoFactorAuth\Api\Exception\NotificationExceptionInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
 use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;

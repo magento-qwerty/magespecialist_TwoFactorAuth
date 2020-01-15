@@ -1,0 +1,126 @@
+<?php
+declare(strict_types=1);
+
+namespace MSP\TwoFactoryAuth\Test\Integration;
+
+use Magento\Framework\Stdlib\Cookie\CookieReaderInterface;
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\TestFramework\TestCase\AbstractBackendController;
+use MSP\TwoFactorAuth\Api\TfaInterface;
+use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
+use MSP\TwoFactorAuth\Model\Provider\Engine\Google;
+
+/**
+ * Test for 2FA enforcement.
+ *
+ * @magentoAppArea adminhtml
+ */
+class ControllerActionPredispatchTest extends AbstractBackendController
+{
+    /**
+     * @var CookieReaderInterface
+     */
+    private $cookieReader;
+
+    /**
+     * @var UserConfigTokenManagerInterface
+     */
+    private $tokenManager;
+
+    /**
+     * @var TfaInterface
+     */
+    private $tfa;
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->cookieReader = Bootstrap::getObjectManager()->get(CookieReaderInterface::class);
+        $this->tokenManager = Bootstrap::getObjectManager()->get(UserConfigTokenManagerInterface::class);
+        $this->tfa = Bootstrap::getObjectManager()->get(TfaInterface::class);
+    }
+
+    /**
+     * Verify that unauthenticated user is redirected to login page.
+     *
+     * @return void
+     * @magentoAppIsolation enabled
+     */
+    public function testUnauthenticated(): void
+    {
+        $this->logout();
+        $this->dispatch('backend/admin/index/index');
+        //Login controller redirects to full start-up URL
+        $this->assertRedirect($this->stringContains('index'));
+        $properUrl = $this->getResponse()->getHeader('Location')->getFieldValue();
+
+        //Login page must be rendered without redirects
+        $this->getRequest()->setDispatched(false);
+        $this->getRequest()->setUri($properUrl);
+        $this->dispatch($properUrl);
+        $this->assertContains('Welcome, please sign in', $this->getResponse()->getBody());
+    }
+
+    /**
+     * Verify that users would be redirected to "2FA Config Request" page when 2FA is not configured for the app.
+     *
+     * @return void
+     */
+    public function testConfigRequested(): void
+    {
+        //Accessing a page in adminhtml area
+        $this->dispatch('backend/admin/user/');
+        //Authenticated user gets a redirect to 2FA configuration page since none is configured.
+        $this->assertRedirect($this->stringContains('requestconfig'));
+    }
+
+    /**
+     * Verify that users would be redirected to "2FA Config Request" page when 2FA is not configured for the user.
+     *
+     * @return void
+     * @magentoConfigFixture default/msp_securitysuite_twofactorauth/general/force_providers google
+     */
+    public function testUserConfigRequested(): void
+    {
+        //Accessing a page in adminhtml area
+        $this->dispatch('backend/admin/user/');
+        //Authenticated user gets a redirect to 2FA configuration page since none is configured for the user.
+        $this->assertRedirect($this->stringContains('requestconfig'));
+    }
+
+    /**
+     * Verify that users returning with a token from the E-mail get a new cookie with it.
+     *
+     * @return void
+     */
+    public function testCookieSet(): void
+    {
+        //Accessing a page in adminhtml area with a valid token.
+        $this->getRequest()
+            ->setQueryValue('tfat', $token = $this->tokenManager->issueFor($this->_session->getUser()->getId()));
+        $this->dispatch('backend/admin/user/');
+        //Authenticated user gets a redirect to 2FA configuration page since none is configured.
+        $this->assertRedirect($this->stringContains('requestconfig'));
+        $this->assertNotEmpty($cookie = $this->cookieReader->getCookie('tfa-ct'));
+        $this->assertEquals($token, $cookie);
+    }
+
+    /**
+     * Verify that users returning with a valid token from the E-mail and 2FA configured get redirected to 2FA form.
+     *
+     * @return void
+     * @magentoConfigFixture default/msp_securitysuite_twofactorauth/general/force_providers google
+     */
+    public function testTfaChallenged(): void
+    {
+        $this->tfa->getProvider(Google::CODE)->activate($this->_session->getUser()->getId());
+        //Accessing a page in adminhtml area
+        $this->dispatch('backend/admin/user/');
+        //Authenticated user with 2FA configured is redirected to 2FA code form.
+        $this->assertRedirect($this->stringContains('msp_twofactorauth/tfa/index'));
+    }
+}
