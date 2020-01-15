@@ -148,17 +148,12 @@ class Tfa implements TfaInterface
         } else {
             $forcedProvidersCodes = $configValue;
         }
-        if (!$forcedProvidersCodes && $configValue) {
-            throw new \RuntimeException(TfaInterface::XML_PATH_FORCED_PROVIDERS .' config value has wrong format');
-        }
 
         if ($forcedProvidersCodes) {
             foreach ($forcedProvidersCodes as $forcedProviderCode) {
                 $provider = $this->getProvider($forcedProviderCode);
                 if ($provider) {
                     $forcedProviders[] = $provider;
-                } elseif (!$this->getProviderByCode($forcedProviderCode)) {
-                    throw new \RuntimeException(TfaInterface::XML_PATH_FORCED_PROVIDERS . ' has invalid values');
                 }
             }
         }
