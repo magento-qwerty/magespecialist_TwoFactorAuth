@@ -6,6 +6,7 @@ namespace MSP\TwoFactorAuth\Model\UserConfig;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Encryption\Helper\Security;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 
 /**
@@ -24,13 +25,20 @@ class SignedTokenManager implements UserConfigTokenManagerInterface
     private $json;
 
     /**
+     * @var DateTime
+     */
+    private $dateTime;
+
+    /**
      * @param EncryptorInterface $encryptor
      * @param Json $json
+     * @param DateTime $dateTime
      */
-    public function __construct(EncryptorInterface $encryptor, Json $json)
+    public function __construct(EncryptorInterface $encryptor, Json $json, DateTime $dateTime)
     {
         $this->encryptor = $encryptor;
         $this->json = $json;
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -38,7 +46,7 @@ class SignedTokenManager implements UserConfigTokenManagerInterface
      */
     public function issueFor(string $userId): string
     {
-        $data = ['user_id' => $userId, 'tfa_configuration' => true, 'iss' => time()];
+        $data = ['user_id' => $userId, 'tfa_configuration' => true, 'iss' => $this->dateTime->timestamp()];
         $encodedData = $this->json->serialize($data);
         $signature = base64_encode($this->encryptor->hash($encodedData));
 
@@ -59,7 +67,7 @@ class SignedTokenManager implements UserConfigTokenManagerInterface
                 && array_key_exists('iss', $data)
                 && $data['user_id'] === $userId
                 && $data['tfa_configuration']
-                && (time() - (int)$data['iss']) < 3600
+                && ($this->dateTime->timestamp() - (int)$data['iss']) < 3600
                 && Security::compareStrings(base64_encode($this->encryptor->hash($encodedData)), $signatureProvided)
             ) {
                 $isValid = true;

@@ -2,7 +2,8 @@
 <!--@vars {
 "var username":"Admin User Name",
 "var store_name":"Current Store (Website) Name",
-"var url":"URL to User 2FA Configuration Page"
+"var token":"Token query parameter",
+"store url="admin" tfat=$token":"URL to User 2FA Configuration Page"
 } @-->
 
 <p>{{var username}},</p>
@@ -10,7 +11,7 @@
 <p>
     {{trans "You are required to configure website-wide and personal Two-Factor Authorization in order to login to"}} {{var store_name}}
     {{trans "To do that please"}}
-    <a href="{{var url}}">{{trans "Click here"}}</a>
+    <a href="{{store url="admin" tfat=$token}}">{{trans "Click here"}}</a>
 </p>
 <p>
     {{trans "Thank you,"}}

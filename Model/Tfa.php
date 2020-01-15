@@ -143,7 +143,7 @@ class Tfa implements TfaInterface
         $forcedProviders = [];
 
         $configValue = $this->scopeConfig->getValue(TfaInterface::XML_PATH_FORCED_PROVIDERS);
-        if (!is_array($configValue)) {
+        if (!is_array($configValue) && $configValue) {
             $forcedProvidersCodes = preg_split('/\s*,\s*/', $configValue);
         } else {
             $forcedProvidersCodes = $configValue;
@@ -152,12 +152,14 @@ class Tfa implements TfaInterface
             throw new \RuntimeException(TfaInterface::XML_PATH_FORCED_PROVIDERS .' config value has wrong format');
         }
 
-        foreach ($forcedProvidersCodes as $forcedProviderCode) {
-            $provider = $this->getProvider($forcedProviderCode);
-            if ($provider) {
-                $forcedProviders[] = $provider;
-            } elseif (!$this->getProviderByCode($forcedProviderCode)) {
-                throw new \RuntimeException(TfaInterface::XML_PATH_FORCED_PROVIDERS .' has invalid values');
+        if ($forcedProvidersCodes) {
+            foreach ($forcedProvidersCodes as $forcedProviderCode) {
+                $provider = $this->getProvider($forcedProviderCode);
+                if ($provider) {
+                    $forcedProviders[] = $provider;
+                } elseif (!$this->getProviderByCode($forcedProviderCode)) {
+                    throw new \RuntimeException(TfaInterface::XML_PATH_FORCED_PROVIDERS . ' has invalid values');
+                }
             }
         }
 

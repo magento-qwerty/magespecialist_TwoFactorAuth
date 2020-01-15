@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace MSP\TwoFactorAuth\Model;
 
-use Magento\Backend\Model\UrlInterface;
 use Magento\Email\Model\BackendTemplate;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -25,11 +24,6 @@ class EmailUserNotifier implements UserNotifierInterface
     private $scopeConfig;
 
     /**
-     * @var UrlInterface
-     */
-    private $urlHelper;
-
-    /**
      * @var TransportBuilder
      */
     private $transportBuilder;
@@ -46,44 +40,20 @@ class EmailUserNotifier implements UserNotifierInterface
 
     /**
      * @param ScopeConfigInterface $scopeConfig
-     * @param UrlInterface $urlHelper
      * @param TransportBuilder $transportBuilder
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        UrlInterface $urlHelper,
         TransportBuilder $transportBuilder,
         StoreManagerInterface $storeManager,
         LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->urlHelper = $urlHelper;
         $this->transportBuilder = $transportBuilder;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
-    }
-
-    /**
-     * Generate URL for user to configure 2FA.
-     *
-     * @param string $token
-     * @return string
-     */
-    private function generateConfigUrl(string $token): string
-    {
-        $url = $this->scopeConfig->getValue('msp_securitysuite_twofactorauth/general/user_config_url');
-        if (!$url) {
-            $url = $this->urlHelper->getStartupPageUrl();
-        }
-        if (mb_strpos($url, '{{tfa_token}}') !== false) {
-            $url = str_replace('{{tfa_token}}', $token, $url);
-        } else {
-            $url = $this->urlHelper->getUrl($url, ['tfat' => $token]);
-        }
-
-        return $url;
     }
 
     /**
@@ -97,8 +67,6 @@ class EmailUserNotifier implements UserNotifierInterface
      */
     private function sendConfigRequired(User $user, string $token, string $emailTemplateId): void
     {
-        $url = $this->generateConfigUrl($token);
-
         try {
             $transport = $this->transportBuilder
                 ->setTemplateIdentifier($emailTemplateId)
@@ -110,11 +78,11 @@ class EmailUserNotifier implements UserNotifierInterface
                 ->setTemplateVars(
                     [
                         'username' => $user->getFirstName() . ' ' . $user->getLastName(),
-                        'url' => $url,
+                        'token' => $token,
                         'store_name' => $this->storeManager->getStore()->getFrontendName()
                     ]
                 )
-                ->setFrom(
+                ->setFromByScope(
                     $this->scopeConfig->getValue('admin/emails/forgot_email_identity')
                 )
                 ->addTo($user->getEmail(), $user->getFirstName() . ' ' . $user->getLastName())
