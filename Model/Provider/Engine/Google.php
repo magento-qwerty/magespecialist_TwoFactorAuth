@@ -152,6 +152,9 @@ class Google implements EngineInterface
     public function verify(UserInterface $user, DataObject $request)
     {
         $token = $request->getData('tfa_code');
+        if (!$token) {
+            return false;
+        }
 
         $totp = $this->getTotp($user);
         $totp->now();

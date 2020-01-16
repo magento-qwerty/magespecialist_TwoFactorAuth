@@ -203,7 +203,11 @@ class DuoSecurity implements EngineInterface
     {
         $time = time();
 
-        list($authSig, $appSig) = explode(':', $request->getData('sig_response'));
+        $sigs = explode(':', $request->getData('sig_response'));
+        if (count($sigs) !== 2) {
+            return false;
+        }
+        list($authSig, $appSig) = $sigs;
 
         $authUser = $this->parseValues($this->getSecretKey(), $authSig, static::AUTH_PREFIX, $time);
         $appUser = $this->parseValues($this->getApplicationKey(), $appSig, static::APP_PREFIX, $time);

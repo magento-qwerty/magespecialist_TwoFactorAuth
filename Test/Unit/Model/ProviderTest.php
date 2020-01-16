@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MSP\TwoFactoryAuth\Test\Unit\Model;
+namespace MSP\TwoFactorAuth\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use MSP\TwoFactorAuth\Model\Provider;

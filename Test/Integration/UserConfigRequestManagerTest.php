@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MSP\TwoFactoryAuth\Test\Integration;
+namespace MSP\TwoFactorAuth\Test\Integration;
 
 use Magento\Framework\Acl\Builder;
 use Magento\TestFramework\Helper\Bootstrap;

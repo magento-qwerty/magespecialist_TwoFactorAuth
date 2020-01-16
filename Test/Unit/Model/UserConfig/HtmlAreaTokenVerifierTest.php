@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MSP\TwoFactoryAuth\Test\Unit\Model\UserConfig;
+namespace MSP\TwoFactorAuth\Test\Unit\Model\UserConfig;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\App\RequestInterface;

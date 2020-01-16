@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MSP\TwoFactoryAuth\Test\Unit\Model;
+namespace MSP\TwoFactorAuth\Test\Unit\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;

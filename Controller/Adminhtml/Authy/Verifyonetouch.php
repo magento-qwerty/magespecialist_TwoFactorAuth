@@ -22,6 +22,7 @@ namespace MSP\TwoFactorAuth\Controller\Adminhtml\Authy;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use MSP\TwoFactorAuth\Model\AlertInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
@@ -32,7 +33,7 @@ use MSP\TwoFactorAuth\Model\Provider\Engine\Authy;
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Verifyonetouch extends AbstractAction
+class Verifyonetouch extends AbstractAction implements HttpGetActionInterface
 {
     /**
      * @var Session

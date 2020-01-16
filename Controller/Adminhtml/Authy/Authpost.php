@@ -22,6 +22,7 @@ namespace MSP\TwoFactorAuth\Controller\Adminhtml\Authy;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
 use MSP\TwoFactorAuth\Model\AlertInterface;
@@ -33,7 +34,7 @@ use MSP\TwoFactorAuth\Model\Provider\Engine\Authy;
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Authpost extends AbstractAction
+class Authpost extends AbstractAction implements HttpPostActionInterface
 {
     /**
      * @var TfaInterface

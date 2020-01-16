@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 
-
-namespace MSP\TwoFactoryAuth\Test\Integration\Controller\Adminhtml\Tfa;
+namespace MSP\TwoFactorAuth\Test\Integration\Controller\Adminhtml\Tfa;
 
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\TestCase\AbstractBackendController;
+use MSP\TwoFactorAuth\TestFramework\TestCase\AbstractBackendController;
 use MSP\TwoFactorAuth\Api\ProviderInterface;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;

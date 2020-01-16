@@ -27,6 +27,7 @@ use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use MSP\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
+use MSP\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -53,18 +54,25 @@ class Auth extends AbstractAction
      */
     private $userConfigManager;
 
+    /**
+     * @var HtmlAreaTokenVerifier
+     */
+    private $tokenVerifier;
+
     public function __construct(
         Action\Context $context,
         Session $session,
         PageFactory $pageFactory,
         UserConfigManagerInterface $userConfigManager,
-        TfaInterface $tfa
+        TfaInterface $tfa,
+        HtmlAreaTokenVerifier $tokenVerifier
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
         $this->session = $session;
         $this->pageFactory = $pageFactory;
         $this->userConfigManager = $userConfigManager;
+        $this->tokenVerifier = $tokenVerifier;
     }
 
     /**
@@ -92,11 +100,19 @@ class Auth extends AbstractAction
      */
     protected function _isAllowed()
     {
-        // Do not check for activation
+        if (!parent::_isAllowed()) {
+            return false;
+        }
+
+        // 1st time users must have the token.
         $user = $this->getUser();
 
         return
             $user &&
-            $this->tfa->getProviderIsAllowed($user->getId(), DuoSecurity::CODE);
+            $this->tfa->getProviderIsAllowed($user->getId(), DuoSecurity::CODE)
+            && (
+                $this->userConfigManager->isProviderConfigurationActive($user->getId(), DuoSecurity::CODE)
+                || $this->tokenVerifier->isConfigTokenProvided()
+            );
     }
 }

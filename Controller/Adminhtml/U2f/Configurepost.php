@@ -109,7 +109,7 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
             );
 
             $res = ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->alert->event(
                 'MSP_TwoFactorAuth',
                 'U2F error while adding device',

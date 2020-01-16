@@ -21,6 +21,7 @@
 namespace MSP\TwoFactorAuth\Controller\Adminhtml\Tfa;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\User\Model\UserFactory;
 use Magento\User\Model\ResourceModel\User as UserResourceModel;
@@ -30,7 +31,7 @@ use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Reset extends AbstractAction
+class Reset extends AbstractAction implements HttpPostActionInterface
 {
     /**
      * @var UserResourceModel

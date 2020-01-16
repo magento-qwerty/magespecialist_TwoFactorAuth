@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace MSP\TwoFactoryAuth\Test\Integration;
+namespace MSP\TwoFactorAuth\Test\Integration;
 
 use Magento\Framework\Stdlib\Cookie\CookieReaderInterface;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\TestCase\AbstractBackendController;
+use MSP\TwoFactorAuth\TestFramework\TestCase\AbstractBackendController;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\TfaSessionInterface;
 use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
