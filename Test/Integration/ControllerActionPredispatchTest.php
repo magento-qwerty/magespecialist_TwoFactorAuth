@@ -7,6 +7,7 @@ use Magento\Framework\Stdlib\Cookie\CookieReaderInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 use MSP\TwoFactorAuth\Api\TfaInterface;
+use MSP\TwoFactorAuth\Api\TfaSessionInterface;
 use MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 use MSP\TwoFactorAuth\Model\Provider\Engine\Google;
 
@@ -33,6 +34,11 @@ class ControllerActionPredispatchTest extends AbstractBackendController
     private $tfa;
 
     /**
+     * @var TfaSessionInterface
+     */
+    private $tfaSession;
+
+    /**
      * @inheritDoc
      */
     protected function setUp()
@@ -41,7 +47,27 @@ class ControllerActionPredispatchTest extends AbstractBackendController
 
         $this->cookieReader = Bootstrap::getObjectManager()->get(CookieReaderInterface::class);
         $this->tokenManager = Bootstrap::getObjectManager()->get(UserConfigTokenManagerInterface::class);
+        $this->tfaSession = Bootstrap::getObjectManager()->get(TfaSessionInterface::class);
         $this->tfa = Bootstrap::getObjectManager()->get(TfaInterface::class);
+    }
+
+    /**
+     * Verify that users with configured 2FA and 2FA completed can proceed to desired page.
+     *
+     * @return void
+     * @magentoConfigFixture default/msp_securitysuite_twofactorauth/general/force_providers google
+     * @magentoDbIsolation enabled
+     * @magentoAppIsolation enabled
+     */
+    public function testTfaCompleted(): void
+    {
+        //Configuring 2FA for the user and completing 2FA.
+        $this->tfa->getProvider(Google::CODE)->activate($this->_session->getUser()->getId());
+        $this->tfaSession->grantAccess();
+        //Accessing a page in adminhtml area
+        $this->dispatch('backend/admin/user/');
+        //Authenticated user with 2FA configured and completed is taken to the Users page as requested.
+        $this->assertRegExp('/' .$this->_session->getUser()->getUserName() .'/i', $this->getResponse()->getBody());
     }
 
     /**

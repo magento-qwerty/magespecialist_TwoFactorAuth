@@ -25,6 +25,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
 use MSP\TwoFactorAuth\Api\TfaInterface;
 use MSP\TwoFactorAuth\Api\UserConfigManagerInterface;
+use MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
 use MSP\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 
 class Index extends AbstractAction
@@ -50,22 +51,30 @@ class Index extends AbstractAction
     private $context;
 
     /**
+     * @var UserConfigRequestManagerInterface
+     */
+    private $userConfigRequest;
+
+    /**
      * @param Context $context
      * @param Session $session
      * @param UserConfigManagerInterface $userConfigManager
      * @param TfaInterface $tfa
+     * @param UserConfigRequestManagerInterface $userConfigRequestManager
      */
     public function __construct(
         Context $context,
         Session $session,
         UserConfigManagerInterface $userConfigManager,
-        TfaInterface $tfa
+        TfaInterface $tfa,
+        UserConfigRequestManagerInterface $userConfigRequestManager
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
         $this->session = $session;
         $this->userConfigManager = $userConfigManager;
         $this->context = $context;
+        $this->userConfigRequest = $userConfigRequestManager;
     }
 
     /**
@@ -84,19 +93,21 @@ class Index extends AbstractAction
     {
         $user = $this->getUser();
 
-        $providersToConfigure = $this->tfa->getProvidersToActivate($user->getId());
-        if (!empty($providersToConfigure)) {
-            return $this->_redirect($providersToConfigure[0]->getConfigureAction());
+        if ($this->userConfigRequest->isConfigurationRequiredFor((string)$user->getId())) {
+            //If 2FA is not configured - request configuration.
+            return $this->_redirect('msp_twofactorauth/tfa/requestconfig');
         }
 
         $providerCode = '';
 
         $defaultProviderCode = $this->userConfigManager->getDefaultProvider($user->getId());
         if ($this->tfa->getProviderIsAllowed($user->getId(), $defaultProviderCode)) {
+            //If default provider was configured - select it.
             $providerCode = $defaultProviderCode;
         }
 
         if (!$providerCode) {
+            //Select one random provider.
             $providers = $this->tfa->getUserProviders($user->getId());
             if (!empty($providers)) {
                 $providerCode = $providers[0]->getCode();
@@ -104,10 +115,12 @@ class Index extends AbstractAction
         }
 
         if (!$providerCode) {
+            //Couldn't find provider - perhaps something is not configured properly.
             return $this->_redirect($this->context->getBackendUrl()->getStartupPageUrl());
         }
 
         if ($provider = $this->tfa->getProvider($providerCode)) {
+            //Provider found, user will be challenged.
             return $this->_redirect($provider->getAuthAction());
         }
 
