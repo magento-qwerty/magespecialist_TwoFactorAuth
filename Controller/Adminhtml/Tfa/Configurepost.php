@@ -99,7 +99,7 @@ class Configurepost extends AbstractAction implements HttpPostActionInterface
     protected function _isAllowed()
     {
         $user = $this->session->getUser();
-        if ($user && !$this->tfa->getUserProviders($user->getId()) && !$this->tokenVerifier->isConfigTokenProvided()) {
+        if ($user && !$this->tokenVerifier->isConfigTokenProvided()) {
             return false;
         }
 
