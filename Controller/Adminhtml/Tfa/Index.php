@@ -93,9 +93,14 @@ class Index extends AbstractAction
     {
         $user = $this->getUser();
 
-        if ($this->userConfigRequest->isConfigurationRequiredFor((string)$user->getId())) {
+        if (!$this->tfa->getUserProviders($user->getId())) {
             //If 2FA is not configured - request configuration.
             return $this->_redirect('msp_twofactorauth/tfa/requestconfig');
+        }
+        $providersToConfigure = $this->tfa->getProvidersToActivate($user->getId());
+        if (!empty($providersToConfigure)) {
+            //2FA provider not activated - redirect to the provider form.
+            return $this->_redirect($providersToConfigure[0]->getConfigureAction());
         }
 
         $providerCode = '';

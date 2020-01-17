@@ -47,7 +47,7 @@ class IndexTest extends AbstractBackendController
     }
 
     /**
-     * Verify that user is taken to Config Request page when personal 2FA is not configured.
+     * Verify that user is taken to provider's configuration page when only personal 2FA is not configured.
      *
      * @return void
      * @magentoConfigFixture default/msp_securitysuite_twofactorauth/general/force_providers google
@@ -55,7 +55,7 @@ class IndexTest extends AbstractBackendController
     public function testUserNotConfigured(): void
     {
         $this->dispatch($this->uri);
-        $this->assertRedirect($this->stringContains('requestconfig'));
+        $this->assertRedirect($this->stringContains('google'));
     }
 
     /**
