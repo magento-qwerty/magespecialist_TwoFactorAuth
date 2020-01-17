@@ -117,6 +117,15 @@ class ControllerActionPredispatch implements ObserverInterface
         $fullActionName = $controllerAction->getRequest()->getFullActionName();
         $user = $this->getUser();
 
+        if (class_exists('Magento\TestFramework\Request')
+            && $controllerAction->getRequest() instanceof \Magento\TestFramework\Request
+            && !$controllerAction->getRequest()->getParam('tfa_enabled')
+        ) {
+            //Hack that allows integration controller tests that are not aware of 2FA to run
+            return;
+        }
+
+
         if (in_array($fullActionName, $this->tfa->getAllowedUrls(), true)) {
             //Actions that are used for 2FA must remain accessible.
             return;

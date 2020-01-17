@@ -48,4 +48,16 @@ class AbstractBackendController extends Base
         $authPlugin = $this->_objectManager->get(\Magento\Security\Model\Plugin\Auth::class);
         $authPlugin->afterLogin($this->_auth);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function dispatch($uri)
+    {
+        if ($this->getRequest()->getParam('tfa_enabled') === null) {
+            $this->getRequest()->setParam('tfa_enabled', true);
+        }
+
+        parent::dispatch($uri);
+    }
 }

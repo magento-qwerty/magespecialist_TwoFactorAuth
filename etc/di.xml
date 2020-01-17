@@ -179,4 +179,5 @@
     <preference for="MSP\TwoFactorAuth\Api\UserConfigRequestManagerInterface" type="MSP\TwoFactorAuth\Model\UserConfig\UserConfigRequestManager" />
     <preference for="MSP\TwoFactorAuth\Api\UserConfigTokenManagerInterface" type="MSP\TwoFactorAuth\Model\UserConfig\SignedTokenManager" />
     <preference for="MSP\TwoFactorAuth\Api\UserNotifierInterface" type="MSP\TwoFactorAuth\Model\EmailUserNotifier" />
+    <preference for="MSP\TwoFactorAuth\Observer\ControllerActionPredispatch" type="MSP\TwoFactorAuth\TestFramework\ControllerActionPredispatch" />
 </config>
