@@ -15,12 +15,12 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
   'Magento_Ui/js/form/element/abstract',
   'Magento_Ui/js/modal/confirm'
 ], function (Abstract, confirm) {
+    'use strict';
+
     return Abstract.extend({
         /**
          * Get a list of providers with reset option

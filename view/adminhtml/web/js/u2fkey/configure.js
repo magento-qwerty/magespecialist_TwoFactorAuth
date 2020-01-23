@@ -15,8 +15,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
     'jquery',
     'ko',
@@ -24,6 +22,8 @@ define([
     'MSP_TwoFactorAuth/js/error',
     'MSP_TwoFactorAuth/js/u2fkey/api'
 ], function ($, ko, Component, error) {
+    'use strict';
+
     return Component.extend({
         currentStep: ko.observable('register'),
 

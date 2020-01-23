@@ -15,8 +15,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
     'jquery',
     'ko',
@@ -25,6 +23,8 @@ define([
     'MSP_TwoFactorAuth/js/authy/configure/registry',
     'mage/translate'
 ], function ($, ko, Component, error, registry) {
+    'use strict';
+
     return Component.extend({
         verifyCode: ko.observable(''),
         messageText: registry.messageText,

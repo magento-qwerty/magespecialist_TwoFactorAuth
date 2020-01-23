@@ -15,11 +15,11 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
     'Magento_Ui/js/form/provider'
 ], function (Provider) {
+    'use strict';
+
     return Provider.extend({
         /**
          * @see Magento_Ui/js/form/provider

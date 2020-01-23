@@ -15,13 +15,13 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
     'ko',
     'uiComponent',
     'MSP_TwoFactorAuth/js/authy/configure/registry'
 ], function (ko, Component, registry) {
+    'use strict';
+
     return Component.extend({
         currentStep: registry.currentStep,
         defaults: {

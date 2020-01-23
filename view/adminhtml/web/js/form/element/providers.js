@@ -15,15 +15,17 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
 
 define(['Magento_Ui/js/form/element/abstract'], function (Abstract) {
+    'use strict';
+
     return Abstract.extend({
         /**
          * Get a list of forced providers
          * @returns {Array}
          */
         getForcedProviders: function () {
+            //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             return this.forced_providers;
         },
 
@@ -32,6 +34,7 @@ define(['Magento_Ui/js/form/element/abstract'], function (Abstract) {
          * @returns {Array}
          */
         getEnabledProviders: function () {
+            //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             return this.enabled_providers;
         },
 

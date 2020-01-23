@@ -93,38 +93,27 @@ class Authpost extends AbstractAction
         DataObjectFactory $dataObjectFactory
     ) {
         parent::__construct($context);
+        $this->tfaSession = $tfaSession;
+        $this->dataObjectFactory = $dataObjectFactory;
+        $this->alert = $alert;
         $this->tfa = $tfa;
         $this->session = $session;
         $this->jsonFactory = $jsonFactory;
         $this->google = $google;
-        $this->tfaSession = $tfaSession;
-        $this->dataObjectFactory = $dataObjectFactory;
-        $this->alert = $alert;
-    }
-
-    /**
-     * Get current user
-     * @return \Magento\User\Model\User|null
-     */
-    private function getUser()
-    {
-        return $this->session->getUser();
     }
 
     /**
      * @inheritdoc
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute()
     {
+        $user = $this->session->getUser();
         $response = $this->jsonFactory->create();
+        /** @var \Magento\Framework\DataObject $request */
+        $request = $this->dataObjectFactory->create(['data' => $this->getRequest()->getParams()]);
 
-        $user = $this->getUser();
-
-        if ($this->google->verify($user, $this->dataObjectFactory->create([
-            'data' => $this->getRequest()->getParams(),
-        ]))) {
+        if ($this->google->verify($user, $request)) {
             $this->tfaSession->grantAccess();
             $response->setData(['success' => true]);
         } else {
@@ -148,11 +137,10 @@ class Authpost extends AbstractAction
      */
     protected function _isAllowed()
     {
-        $user = $this->getUser();
+        $user = $this->session->getUser();
 
-        return
-            $user &&
-            $this->tfa->getProviderIsAllowed($user->getId(), Google::CODE) &&
-            $this->tfa->getProvider(Google::CODE)->isActive($user->getId());
+        return $user
+            && $this->tfa->getProviderIsAllowed($user->getId(), Google::CODE)
+            && $this->tfa->getProvider(Google::CODE)->isActive($user->getId());
     }
 }

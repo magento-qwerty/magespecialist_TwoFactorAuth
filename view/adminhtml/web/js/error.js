@@ -15,13 +15,13 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-'use strict';
-
 define([
     'jquery',
     'Magento_Ui/js/modal/alert',
     'mage/translate'
 ], function ($, alert) {
+    'use strict';
+
     return {
         /**
          * Display an error message
