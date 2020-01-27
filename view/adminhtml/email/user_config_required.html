@@ -3,12 +3,13 @@
 "var username":"Admin User Name",
 "var store_name":"Current Store (Website) Name",
 "var token":"Token query parameter",
-"store url="admin" tfat=$token":"URL to User 2FA Configuration Page"
+"store url=\"admin\" tfat=$token":"URL to User 2FA Configuration Page"
 } @-->
 
 <p>{{var username}},</p>
 <p>
     {{trans "You are required to configure personal Two-Factor Authorization in order to login to"}} {{var store_name}}
+    <br/>
     {{trans "To do that please"}}
     <a href="{{store url="admin" tfat=$token}}">{{trans "Click here"}}</a>
 </p>

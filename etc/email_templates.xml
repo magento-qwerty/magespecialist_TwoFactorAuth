@@ -6,6 +6,6 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
-    <template id="msp_twofactorauth_admin_user_config_required" label="2FA Configuration Required by User" file="user_config_required.html" type="text" module="MSP_TwoFactorAuth" area="adminhtml"/>
-    <template id="msp_twofactorauth_admin_app_config_required" label="2FA Configuration Required for the Application" file="app_config_required.html" type="text" module="MSP_TwoFactorAuth" area="adminhtml"/>
+    <template id="msp_twofactorauth_admin_user_config_required" label="2FA Configuration Required by User" file="user_config_required.html" type="html" module="MSP_TwoFactorAuth" area="adminhtml"/>
+    <template id="msp_twofactorauth_admin_app_config_required" label="2FA Configuration Required for the Application" file="app_config_required.html" type="html" module="MSP_TwoFactorAuth" area="adminhtml"/>
 </config>
